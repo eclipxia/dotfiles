@@ -1,28 +1,30 @@
-#!/bin/sh
+#!/usr/bin/env bash
+set -euo pipefail
 
-if [ -d "/nix" ] ; then
-	echo "Nix is installed"
-else
-	curl -fsSL https://install.determinate.systems/nix | sh -s -- install
+dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+if ! command -v zsh >/dev/null; then
+	if command -v apt-get >/dev/null; then
+		sudo apt-get update && sudo apt-get install -y zsh
+	elif command -v dnf >/dev/null; then
+		sudo dnf install -y zsh
+	elif command -v pacman >/dev/null; then
+		sudo pacman -Sy --noconfirm zsh
+	elif command -v zypper >/dev/null; then
+		sudo zypper install -y zsh
+	else
+		echo "no known package manager found, install zsh manually" >&2
+		exit 1
+	fi
 fi
 
-if ! command -v brew &>/dev/null; then
-    /bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-else
-    brew update
+cp -r "$dir/fzf-tab" "$dir/fast-syntax-highlighting" ~/
+cp "$dir/.zshrc" ~/
+
+zsh_path="$(command -v zsh)"
+if [ "$SHELL" != "$zsh_path" ]; then
+	chsh -s "$zsh_path"
 fi
 
-brew install git
-
-git pull https://github.com/eclipxia/dotfiles
-
-if [ -d ~/.config/nvim ] ; then 
-	mv ~/.config/nvim ~/.config/nvim_old 
-	cp -r ~/dotfiles/nvim ~/.config/nvim
-else 
-	cp -r ~/dotfiles/nvim ~/.config/
-fi
-
-rm ~/.gitconfig
-cp ~/dotfiles/.gitconfig ~/ 
-brew install luarocks
+rm -f ~/.gitconfig
+cp "$dir/.gitconfig" ~/

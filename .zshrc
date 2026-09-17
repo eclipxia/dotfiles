@@ -1,4 +1,10 @@
-export FUNCNEST=1000
+set rtp+=/opt/homebrew/opt/fzf
+unset SSH_AGENT_PID
+unset SSH_AUTH_SOCK
+source ~/fzf-tab/fzf-tab.plugin.zsh
+source ~/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
+source <(fzf --zsh)
+bindkey -v
 eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"
 # Enable Zsh completion system
@@ -9,15 +15,12 @@ zmodload zsh/complist
 zstyle ':completion:*' menu select
 zstyle ':completion:*' group-name ''
 zstyle ':completion:*:descriptions' format '%B%d%b'
-
-source ~/.zsh/plugins/fzf-tab/fzf-tab.plugin.zsh
-source ~/.zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 source ~/scrips/project-fzf.sh
-source <(fzf --zsh)
-bindkey -v
 export MANPAGER='nvim +Man!'
 alias rebuild="sudo -H nix run nix-darwin#darwin-rebuild -- switch --flake ~/.config/nix-darwin
 "
+alias nano ="nvim"
 alias cp="cp -r"
 alias g="git"
 alias v="nvim"
@@ -33,6 +36,7 @@ export PATH="/opt/homebrew/opt/tcl-tk/bin:$PATH"
 export LDFLAGS="-L/opt/homebrew/opt/tcl-tk/lib"
 export CPPFLAGS="-I/opt/homebrew/opt/tcl-tk/include"
 export PKG_CONFIG_PATH="/opt/homebrew/opt/tcl-tk/lib/pkgconfig"
+export FUNCNEST=100
 extract() {
 	for archive in "$@"; do
 		if [ -f "$archive" ]; then
@@ -63,3 +67,4 @@ export PATH="/opt/homebrew/opt/util-linux/sbin:$PATH"
 export PATH="$PATH:/Users/eclipxia/.local/bin"
 alias cs="cd /Users/eclipxia/Documents/school
 "
+
