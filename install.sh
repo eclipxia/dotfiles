@@ -14,6 +14,10 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
 else
 	pkgs=(zsh tmux fzf git-delta zoxide eza zsh-autosuggestions zsh-completions)
 	if command -v apt-get >/dev/null; then
+		while sudo fuser /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock /var/lib/apt/lists/lock >/dev/null 2>&1; do
+			echo "waiting for another apt/dpkg process (e.g. cloud-init) to finish..." >&2
+			sleep 3
+		done
 		sudo apt-get update && sudo apt-get install -y "${pkgs[@]}"
 	elif command -v dnf >/dev/null; then
 		sudo dnf install -y "${pkgs[@]}"
