@@ -9,9 +9,9 @@ unset brew_prefix
 
 
 # Created by `pipx` on 2025-09-05 16:22:07
-export PATH="$PATH:/Users/eclipxia/.local/bin"
+export PATH="$PATH:$HOME/.local/bin"
 export PATH="/opt/homebrew/bin:$PATH"
 
 # Added by Toolbox App
-export PATH="$PATH:/Users/eclipxia/Library/Application Support/JetBrains/Toolbox/scripts"
+export PATH="$PATH:$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
 

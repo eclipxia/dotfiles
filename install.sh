@@ -35,9 +35,11 @@ else
 
 	if ! command -v docker >/dev/null; then
 		echo "Docker not found, installing it" >&2
-		curl -fsSL https://get.docker.com | sudo sh
-		sudo usermod -aG docker "$USER"
-		command -v systemctl >/dev/null && sudo systemctl enable --now docker
+		{
+			curl -fsSL https://get.docker.com | sudo sh
+			sudo usermod -aG docker "$USER"
+			command -v systemctl >/dev/null && sudo systemctl enable --now docker
+		} || echo "Docker install failed, continuing without it" >&2
 	fi
 fi
 
