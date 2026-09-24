@@ -1,0 +1,6 @@
+[submodule "fzf-tab"]
+	path = fzf-tab
+	url = https://github.com/Aloxaf/fzf-tab
+[submodule "fast-syntax-highlighting"]
+	path = fast-syntax-highlighting
+	url = https://github.com/zdharma-continuum/fast-syntax-highlighting

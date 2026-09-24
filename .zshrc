@@ -1,9 +1,17 @@
+stty -ixon
 set rtp+=/opt/homebrew/opt/fzf
 unset SSH_AGENT_PID
 unset SSH_AUTH_SOCK
 source ~/fzf-tab/fzf-tab.plugin.zsh
+source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source ~/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
 source <(fzf --zsh)
+if type brew &>/dev/null; then
+FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
+
+autoload -Uz compinit
+compinit
+fi
 bindkey -v
 eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"
@@ -68,3 +76,22 @@ export PATH="$PATH:/Users/eclipxia/.local/bin"
 alias cs="cd /Users/eclipxia/Documents/school
 "
 
+export PATH="$HOME/.jenv/bin:$PATH"
+eval "$(jenv init -)"
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+export PATH="$HOME/bin:$PATH"
+export PATH="$PATH:$HOME/.dotnet/tools"
+
+# sqlcmd workaround for azure-sql-edge self-signed cert (negative serial)
+export GODEBUG=x509negativeserial=1
+
+# Per-language nvim profiles (see ~/.config/nvim/lua/lang.lua)
+alias jvim='NVIM_LANG=java nvim'
+alias csvim='NVIM_LANG=cs nvim'
+alias pvim='NVIM_LANG=python nvim'
+alias sqlvim='NVIM_LANG=sql nvim'
+alias webvim='NVIM_LANG=web nvim'
+alias cvim='NVIM_LANG=c nvim'

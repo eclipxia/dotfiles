@@ -1,0 +1,117 @@
+#!/bin/bash
+
+# Add Homebrew to PATH so SketchyBar can find binaries
+export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+
+############## DRACULA PALETTE ##############
+BG=0xff282a36
+CURRENT_LINE=0xff44475a
+FG=0xfff8f8f2
+COMMENT=0xff6272a4
+CYAN=0xff8be9fd
+GREEN=0xff50fa7b
+ORANGE=0xffffb86c
+PINK=0xffff79c6
+PURPLE=0xffbd93f9
+RED=0xffff5555
+YELLOW=0xfff1fa8c
+
+############## BAR ##############
+# topmost + y_offset=0 lets the bar occupy the real menu bar strip;
+# enable "Automatically hide and show the menu bar" in System Settings
+# so the real menu bar gets out of the way.
+sketchybar -m --bar height=25 \
+                    y_offset=0 \
+                    blur_radius=0 \
+                    position=top \
+                    topmost=window \
+                    padding_left=5 \
+                    padding_right=5 \
+                    margin=0 \
+                    corner_radius=0 \
+                    color=$BG \
+                    border_width=0 \
+                    border_color=$BG
+
+############## GLOBAL DEFAULTS ##############
+sketchybar -m --default updates=when_shown \
+                        drawing=on \
+                        icon.font="JetBrainsMono Nerd Font:Regular:10.0" \
+                        icon.color=$FG \
+                        icon.highlight_color=$GREEN \
+                        label.font="JetBrainsMono Nerd Font:Regular:10.0" \
+                        label.color=$FG
+
+############## SPACE DEFAULTS ##############
+sketchybar -m --default label.padding_left=0 \
+                        label.padding_right=4 \
+                        icon.padding_left=6 \
+                        icon.padding_right=2
+
+sketchybar -m --add item logo left \
+              --set logo icon= \
+                    background.color=$RED \
+                    background.height=20 \
+                    background.padding_right=0 \
+                    click_script="sketchybar -m --update"
+
+############## AEROSPACE WORKSPACES ##############
+sketchybar --add event aerospace_workspace_change
+
+AEROSPACE_WORKSPACES=("1:Code" "2:Notes" "3" "4" "5" "6" "7" "8" "9")
+AEROSPACE_ICONS=("" "爵" "" "" "" "" "" "" "")
+
+SPACE_BRACKET_ITEMS=()
+
+for i in "${!AEROSPACE_WORKSPACES[@]}"; do
+  SID="${AEROSPACE_WORKSPACES[$i]}"
+  SPACE_NAME="space.$SID"
+  SPACE_BRACKET_ITEMS+=("$SPACE_NAME")
+  
+  sketchybar --add item "$SPACE_NAME" left \
+             --set "$SPACE_NAME" \
+                   icon="${AEROSPACE_ICONS[$i]}" \
+                   label="$SID" \
+                   background.color=$CURRENT_LINE \
+                   background.drawing=off \
+                   script="~/.config/sketchybar/plugins/aerospace.sh" \
+                   click_script="aerospace workspace '$SID'" \
+             --subscribe "$SPACE_NAME" aerospace_workspace_change
+done
+
+############## ITEM DEFAULTS ###############
+sketchybar -m --default label.padding_left=0 \
+                        icon.padding_right=3 \
+                        icon.padding_left=6 \
+                        label.padding_right=3
+
+############## BRACKETS ##############
+# Dynamically injecting the space names so changes above won't break the layout
+sketchybar -m --add bracket primary_spaces "${SPACE_BRACKET_ITEMS[@]}" \
+               --set primary_spaces background.color=$CURRENT_LINE \
+                                    background.corner_radius=0 \
+                                    background.height=20
+
+############## RIGHT SIDE: BATTERY / KEYBOARD / CLOCK ##############
+sketchybar -m --add item battery right \
+               --set battery update_freq=30 \
+                             icon.color=$GREEN \
+                             script="~/.config/sketchybar/plugins/power.sh" \
+               --subscribe battery system_woke power_source_change \
+            --add item keyboard right \
+               --set keyboard update_freq=1 \
+                              icon=⌨ \
+                              icon.color=$PURPLE \
+                              label.color=$PURPLE \
+                              script="~/.config/sketchybar/plugins/keyboard.sh" \
+            --add item clock right \
+               --set clock update_freq=10 \
+                           icon=🕐 \
+                           icon.color=$CYAN \
+                           label.color=$CYAN \
+                           script="~/.config/sketchybar/plugins/clock.sh"
+
+############## FINALIZING THE SETUP ##############
+sketchybar -m --update
+
+echo "sketchybar configuration loaded..."

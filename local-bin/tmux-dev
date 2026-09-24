@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+# Launch (or attach to) a tmux dev session with:
+#   window 1: nvim
+#   window 2: claude (named "claude", runs `claude`)
+#   window 3: webserver (empty shell, project dir)
+#
+# Usage:
+#   tmux-dev                       pick repo+branch via fzg, use that dir
+#   tmux-dev [project-dir] [name]  use the given dir directly
+
+set -euo pipefail
+
+if [ -n "${1:-}" ]; then
+  dir="$1"
+  dir="$(cd "$dir" && pwd)"
+else
+  source ~/scrips/project-fzf.sh
+  fzg || exit 1
+  dir="$PWD"
+fi
+
+session="${2:-$(basename "$dir")}"
+
+if tmux has-session -t "$session" 2>/dev/null; then
+  exec tmux attach-session -t "$session"
+fi
+
+# Detect NVIM_LANG from project markers so nvim never has to ask.
+lang=""
+if find "$dir" -maxdepth 1 -name '*.sln' -print -quit | grep -q . \
+  || find "$dir" -maxdepth 2 -name '*.csproj' -print -quit | grep -q .; then
+  lang=cs
+elif [ -f "$dir/pom.xml" ] || [ -f "$dir/build.gradle" ] || [ -f "$dir/build.gradle.kts" ] \
+  || [ -f "$dir/settings.gradle" ] || [ -f "$dir/settings.gradle.kts" ]; then
+  lang=java
+elif [ -f "$dir/pyproject.toml" ] || [ -f "$dir/requirements.txt" ] || [ -f "$dir/setup.py" ]; then
+  lang=python
+elif [ -f "$dir/package.json" ]; then
+  lang=web
+fi
+
+case "$lang" in
+  cs)     win=csvim ;;
+  java)   win=jvim ;;
+  python) win=pvim ;;
+  web)    win=webvim ;;
+  *)      win=nvim ;;
+esac
+
+tmux new-session -d -s "$session" -c "$dir" -n "$win"
+tmux send-keys -t "$session:$win" "${lang:+NVIM_LANG=$lang }nvim" C-m
+
+tmux new-window -t "$session" -c "$dir" -n claude
+tmux send-keys -t "$session:claude" "claude" C-m
+
+tmux new-window -t "$session" -c "$dir" -n webserver
+
+tmux select-window -t "$session:$win"
+exec tmux attach-session -t "$session"

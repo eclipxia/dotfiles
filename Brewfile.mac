@@ -1,0 +1,10 @@
+tap "felixkratz/formulae"
+tap "nikitabobko/tap"
+
+brew "tcl-tk"
+brew "util-linux"
+brew "sketchybar"
+
+cask "aerospace"
+cask "docker"
+cask "font-jetbrains-mono-nerd-font"

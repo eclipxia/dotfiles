@@ -1,11 +1,13 @@
 [user]
   name = eclipxia
-	email = xaylei@outlook.com
+  email = cselestia@proton.me
   signingkey = ~/.ssh/id_ed25519.pub
 
 [remote "origin"]
 	; fetch = +refs/heads/*:refs/remotes/origin/*
 
+[includeIf "gitdir:/home/eclipxia/Documents/"]
+    path = ~/.gitconfig-school
 [alias]
   ;; add ;;
   a = add
@@ -31,7 +33,7 @@
 
 
   ;; commit ;;
-  c = "! git commit -S --verbose; git push"
+  c = "! git commit -S --verbose"
   cf = "! git commit -S --verbose; git push --force"
   cm = commit -Sm
   ca = "! git commit -S --verbose --amend"
@@ -62,7 +64,6 @@
   dc = diff --cached
 
 
-  ;; worktree ;;
   wl = worktree list
   wa = "! f(){ git worktree add ../$1 $1; }; f"
   wr = worktree remove
@@ -162,22 +163,40 @@
 
 
 [color]
-  diff = auto
-  status = auto
-  branch = auto
+	diff = auto
+	status = auto
+	branch = auto
 
 [branch]
-  autosetuprebase = always
+	autosetuprebase = always
 [core]
-	pager = nvim +Man!
-  editor = nvim
+	pager = delta
+	editor = nvim
+	excludesfile = /Users/eclipxia/.gitignore_global
 
+[interactive]
+	diffFilter = delta --color-only
+
+[delta]
+	navigate = true  # use n and N to move between diff sections
+	dark = true      # or light = true, or omit for auto-detection
+	line-numbers = true
+
+[merge]
+	conflictStyle = zdiff3
+[rebase]
+	conflictStyle = zdiff3
 [gpg] 
-    format = ssh
+	format = ssh
 
 [commit]
-    gpgsign = true
+	gpgsign = true
 [tag]
-    gpgsign = true
+	gpgsign = true
 [gpg "ssh"]
-    allowedSignersFile = ~/.ssh/allow_signers
+	allowedSignersFile = ~/.ssh/allow_signers
+[includeIf "gitdir:~/Documents/"]
+	path = /Users/eclipxia/.gitconfig-school
+
+[rerere]
+	enabled = true

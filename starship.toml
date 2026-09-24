@@ -6,7 +6,7 @@ format = "$all"
 right_format = ""
 continuation_prompt = "[∙](bright-black) "
 scan_timeout = 30
-command_timeout = 500
+command_timeout = 1000
 add_newline = true
 follow_symlinks = true
 
@@ -1028,7 +1028,7 @@ detect_folders = [".metals"]
 format = "[$indicator]($style) "
 bash_indicator = "bsh"
 fish_indicator = "fsh"
-zsh_indicator = "zsh"
+# zsh_indicator = "zsh"
 powershell_indicator = "psh"
 ion_indicator = "ion"
 elvish_indicator = "esh"
