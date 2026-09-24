@@ -44,7 +44,7 @@ fi
 git -C "$dir" submodule update --init --recursive
 
 cp -r "$dir/fzf-tab" "$dir/fast-syntax-highlighting" ~/
-cp "$dir/.zshrc" "$dir/.zprofile" "$dir/.gitconfig" ~/
+cp "$dir/.zshrc" "$dir/.zprofile" "$dir/.gitconfig" "$dir/.tmux.conf" ~/
 
 mkdir -p ~/.config
 cp "$dir/starship.toml" ~/.config/starship.toml
