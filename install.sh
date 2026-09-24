@@ -6,7 +6,7 @@ dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 if [[ "$(uname -s)" == "Darwin" ]]; then
 	if ! command -v brew >/dev/null; then
 		echo "Homebrew not found, installing it" >&2
-		/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+		NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 		eval "$(/opt/homebrew/bin/brew shellenv 2>/dev/null || /usr/local/bin/brew shellenv)"
 	fi
 	brew bundle --file="$dir/Brewfile"
@@ -27,10 +27,11 @@ else
 
 	if ! command -v brew >/dev/null; then
 		echo "Installing Homebrew as a fallback for anything the system package manager missed" >&2
-		/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+		NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" \
+			|| echo "Homebrew install failed, continuing without it" >&2
 	fi
-	eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv 2>/dev/null || ~/.linuxbrew/bin/brew shellenv)"
-	brew bundle --file="$dir/Brewfile"
+	eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv 2>/dev/null || ~/.linuxbrew/bin/brew shellenv 2>/dev/null)" || true
+	command -v brew >/dev/null && brew bundle --file="$dir/Brewfile"
 
 	if ! command -v docker >/dev/null; then
 		echo "Docker not found, installing it" >&2
