@@ -1,0 +1,106 @@
+" VsVim port of eclipxia/nvim keymaps. Lives at %USERPROFILE%\.vsvimrc (or _vsvimrc).
+" Anything marked (?) is a VS command name I couldn't verify -- check Tools > Options >
+" Keyboard, or run :vsc <Tab> style lookups, and fix the name if it errors.
+
+let mapleader=" "
+
+" ---- settings -------------------------------------------------------------
+set number relativenumber
+set noswapfile
+set ignorecase smartcase
+set hlsearch incsearch
+set clipboard=unnamed
+
+" ---- core (keymaps.lua) ---------------------------------------------------
+nnoremap <C-d> <C-d>zz
+nnoremap <C-u> <C-u>zz
+nnoremap n nzzzv
+nnoremap N Nzzzv
+
+" move selected lines
+vnoremap J :m '>+1<CR>gv=gv
+vnoremap K :m '<-2<CR>gv=gv
+
+nnoremap <leader>w :w<CR>
+nnoremap <leader>q :q<CR>
+nnoremap <leader>bd :bd!<CR>
+
+" split navigation
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
+" buffer (tab) navigation
+nnoremap [b :vsc Window.PreviousTab<CR>
+nnoremap ]b :vsc Window.NextTab<CR>
+nnoremap <C-A-k> :vsc Window.PreviousTab<CR>
+nnoremap <C-A-j> :vsc Window.NextTab<CR>
+
+" comment toggle (native gcc/gc in nvim)
+nnoremap <leader>/ :vsc Edit.ToggleLineComment<CR>
+vnoremap <leader>/ :vsc Edit.ToggleLineComment<CR>
+
+" ---- LSP (lspconfig.lua) --------------------------------------------------
+nnoremap gd :vsc Edit.GoToDefinition<CR>
+nnoremap gD :vsc Edit.GoToDeclaration<CR>
+nnoremap gR :vsc Edit.FindAllReferences<CR>
+nnoremap gi :vsc Edit.GoToImplementation<CR>
+nnoremap gt :vsc Edit.GoToTypeDefinition<CR>
+nnoremap K  :vsc Edit.QuickInfo<CR>
+nnoremap <leader>ca :vsc View.QuickActions<CR>
+vnoremap <leader>ca :vsc View.QuickActions<CR>
+nnoremap <leader>rn :vsc Refactor.Rename<CR>
+nnoremap <leader>D :vsc View.ErrorList<CR>
+nnoremap <leader>d :vsc Edit.QuickInfo<CR>
+nnoremap ]d :vsc View.NextError<CR>
+nnoremap [d :vsc View.PreviousError<CR>
+nnoremap <leader>oi :vsc Edit.RemoveAndSort<CR>
+
+" format (conform.lua)
+nnoremap <leader>f :vsc Edit.FormatDocument<CR>
+vnoremap <leader>f :vsc Edit.FormatSelection<CR>
+
+" ---- treesitter-textobjects motions --------------------------------------
+nnoremap ]f :vsc Edit.NextMethod<CR>
+nnoremap [f :vsc Edit.PreviousMethod<CR>
+
+" ---- telescope ------------------------------------------------------------
+nnoremap <leader>ff :vsc Edit.GoToFile<CR>
+nnoremap <leader>fg :vsc Edit.FindinFiles<CR>
+nnoremap <leader>fb :vsc Window.ShowEzMDIFileList<CR>
+nnoremap <leader>ws :vsc Edit.GoToSymbol<CR>
+nnoremap <leader>ft :vsc View.TaskList<CR>
+nnoremap <leader>re :registers<CR>
+
+" ---- nvim-tree / toggleterm / undotree -----------------------------------
+nnoremap <leader>e :vsc View.SolutionExplorer<CR>
+nnoremap <leader>t :vsc View.Terminal<CR>
+
+" ---- git (fugitive / gitsigns) -------------------------------------------
+nnoremap <leader>gs :vsc View.GitWindow<CR>
+nnoremap <leader>gb :vsc Team.Git.Annotate<CR>
+nnoremap <leader>gd :vsc Team.Git.CompareWithUnmodified<CR>
+nnoremap <leader>gl :vsc View.GitRepositoryWindow<CR>
+nnoremap ]c :vsc Diff.NextDifference<CR>
+nnoremap [c :vsc Diff.PreviousDifference<CR>
+
+" ---- debugging (nvim-dap, <leader>x*) ------------------------------------
+nnoremap <leader>xb :vsc Debug.ToggleBreakpoint<CR>
+nnoremap <leader>xc :vsc Debug.Start<CR>
+nnoremap <leader>xo :vsc Debug.StepOver<CR>
+nnoremap <leader>xi :vsc Debug.StepInto<CR>
+nnoremap <leader>xO :vsc Debug.StepOut<CR>
+nnoremap <leader>xq :vsc Debug.StopDebugging<CR>
+nnoremap <leader>xu :vsc Debug.Locals<CR>
+
+" ---- harpoon approximation: global marks A-D -----------------------------
+" <leader>m1..4 sets the mark (harpoon add), <leader>1..4 jumps (harpoon select)
+nnoremap <leader>m1 mA
+nnoremap <leader>m2 mB
+nnoremap <leader>m3 mC
+nnoremap <leader>m4 mD
+nnoremap <leader>1 'A
+nnoremap <leader>2 'B
+nnoremap <leader>3 'C
+nnoremap <leader>4 'D
