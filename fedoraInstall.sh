@@ -43,6 +43,8 @@ packages=(
   golang
   luarocks
   python3
+  zip               # sdkman needs zip/unzip
+  unzip
 )
 packages+=("${WMS[@]}")
 
@@ -71,6 +73,21 @@ for wm in "${WMS[@]}"; do
   log "copying $wm config"
   (( DRY_RUN )) || { mkdir -p "$(dirname "$dst")"; cp "$src" "$dst"; }
 done
+
+# SDKMAN (rcupdate=false: don't touch shell rc files, dotfiles manage them)
+if (( DRY_RUN )); then
+  log "[dry-run] install sdkman"
+elif [[ ! -d ~/.sdkman ]]; then
+  curl -s "https://get.sdkman.io?rcupdate=false" | bash
+fi
+
+# Starship prompt, installed to ~/.local/bin (no sudo)
+if (( DRY_RUN )); then
+  log "[dry-run] install starship"
+elif ! command -v starship >/dev/null && [[ ! -x ~/.local/bin/starship ]]; then
+  mkdir -p ~/.local/bin
+  curl -sS https://starship.rs/install.sh | sh -s -- -y -b ~/.local/bin
+fi
 
 # Neovim config has its own install script
 if (( DRY_RUN )); then
