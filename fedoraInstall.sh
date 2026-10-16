@@ -43,8 +43,22 @@ packages=(
   golang
   luarocks
   python3
-  zip               # sdkman needs zip/unzip
+  nodejs            # codex is installed via npm
+  npm
+  zip              # sdkman needs zip/unzip
   unzip
+  qemu-kvm          # virtualization stack
+  libvirt
+  virt-manager
+  virt-install
+  edk2-ovmf         # UEFI guests
+  swtpm             # TPM emulation (Windows 11 guests)
+  swtpm-tools
+  virt-viewer
+  libguestfs-tools  # virt-sysprep, guestfish, etc.
+  bridge-utils
+  virtiofsd         # shared folders
+  dnsmasq           # libvirt default NAT network
 )
 packages+=("${WMS[@]}")
 
@@ -61,6 +75,14 @@ elif (( DRY_RUN )); then
 else
   log "installing: ${missing[*]}"
   sudo dnf install -y "${missing[@]}"
+fi
+
+# libvirt daemon + group access (log out/in for the group to apply)
+if (( DRY_RUN )); then
+  log "[dry-run] enable libvirtd, add $USER to libvirt group"
+else
+  sudo systemctl enable --now libvirtd
+  id -nG "$USER" | grep -qw libvirt || sudo usermod -aG libvirt "$USER"
 fi
 
 # Window manager configs: expects $dir/i3/config and $dir/niri/config.kdl
@@ -89,10 +111,27 @@ elif ! command -v starship >/dev/null && [[ ! -x ~/.local/bin/starship ]]; then
   curl -sS https://starship.rs/install.sh | sh -s -- -y -b ~/.local/bin
 fi
 
+# Claude Code (native installer -> ~/.local/bin) and Codex (npm, prefix ~/.local, no sudo)
+if (( DRY_RUN )); then
+  log "[dry-run] install claude code and codex"
+else
+  command -v claude >/dev/null || [[ -x ~/.local/bin/claude ]] || curl -fsSL https://claude.ai/install.sh | bash
+  command -v codex >/dev/null || [[ -x ~/.local/bin/codex ]] || npm install -g --prefix ~/.local @openai/codex
+fi
+
 # Neovim config has its own install script
 if (( DRY_RUN )); then
   log "[dry-run] clone nvim repo and run its install.sh"
 else
   [[ -d ~/.config/nvim/.git ]] || git clone https://github.com/eclipxia/nvim ~/.config/nvim
   bash ~/.config/nvim/install.sh
+fi
+
+# Last step: make zsh the login shell (takes effect on next login)
+zsh_path="$(command -v zsh)"
+if (( DRY_RUN )); then
+  log "[dry-run] chsh -s $zsh_path"
+elif [[ "$(getent passwd "$USER" | cut -d: -f7)" != "$zsh_path" ]]; then
+  log "switching login shell to zsh"
+  sudo chsh -s "$zsh_path" "$USER"
 fi
