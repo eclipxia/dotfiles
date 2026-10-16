@@ -3,7 +3,11 @@ set rtp+=/opt/homebrew/opt/fzf
 unset SSH_AGENT_PID
 unset SSH_AUTH_SOCK
 source ~/fzf-tab/fzf-tab.plugin.zsh
+if type brew &>/dev/null; then
 source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+else
+source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+fi
 source ~/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
 source <(fzf --zsh)
 if type brew &>/dev/null; then

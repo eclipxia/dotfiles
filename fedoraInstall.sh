@@ -35,6 +35,8 @@ packages=(
   neovim
   tmux
   zsh
+  zsh-autosuggestions
+  zoxide
   ripgrep
   fzf
   util-linux-user   # provides chsh on Fedora
@@ -117,6 +119,22 @@ if (( DRY_RUN )); then
 else
   command -v claude >/dev/null || [[ -x ~/.local/bin/claude ]] || curl -fsSL https://claude.ai/install.sh | bash
   command -v codex >/dev/null || [[ -x ~/.local/bin/codex ]] || npm install -g --prefix ~/.local @openai/codex
+fi
+
+# Dotfiles: shell/git/tmux rc files, zsh plugin submodules, and app configs
+if (( DRY_RUN )); then
+  log "[dry-run] copy dotfiles from $dir into ~"
+else
+  log "copying dotfiles"
+  git -C "$dir" submodule update --init --recursive
+  cp -r "$dir/fzf-tab" "$dir/fast-syntax-highlighting" ~/
+  cp "$dir"/.zshrc "$dir"/.zprofile "$dir"/.gitconfig "$dir"/.tmux.conf "$dir"/.vsvimrc ~/
+  mkdir -p ~/.config/kitty ~/.zsh/cache ~/scrips ~/.local/bin
+  cp "$dir/starship.toml" ~/.config/starship.toml
+  cp "$dir/kitty/kitty.conf" ~/.config/kitty/kitty.conf
+  cp "$dir/scrips/project-fzf.sh" ~/scrips/
+  cp "$dir/local-bin/tmux-dev" ~/.local/bin/
+  chmod +x ~/.local/bin/tmux-dev
 fi
 
 # Neovim config has its own install script
